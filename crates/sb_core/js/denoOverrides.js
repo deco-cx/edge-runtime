@@ -7,6 +7,8 @@ import { serve, serveHttp } from 'ext:sb_core_main_js/js/http.js';
 import * as fs from 'ext:deno_fs/30_fs.js';
 import { osCalls } from 'ext:sb_os/os.js';
 import * as io from 'ext:deno_io/12_io.js';
+import { upgradeWebSocket } from 'ext:deno_http/01_http.js';
+
 
 const osCallsVars = {
 	gid: osCalls.gid,
@@ -95,10 +97,12 @@ const ioVars = {
 };
 
 const denoOverrides = {
+	run: undefined,
 	listen: net.listen,
 	connect: net.connect,
 	connectTls: tls.connectTls,
 	startTls: tls.startTls,
+	upgradeWebSocket,
 	resolveDns: net.resolveDns,
 	serveHttp: serveHttp,
 	serve: serve,

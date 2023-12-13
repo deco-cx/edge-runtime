@@ -40,7 +40,7 @@ serve(async (req: Request) => {
 				'deco/': 'https://denopkg.com/deco-cx/deco@304f189e747c5d399fdaa5fc69227cfc679e662f/',
 				'$live/': 'https://denopkg.com/deco-cx/deco@304f189e747c5d399fdaa5fc69227cfc679e662f/',
 				'apps/': 'https://denopkg.com/deco-cx/apps@709968ebb9f3609af42c6e8ee6c231a909071770/',
-				'$fresh/': 'https://denopkg.com/mcandeia/fresh@e0228fa9639ccc1fb2b2323496bdfa9c06c615dd/',
+				'$fresh/': 'https://denopkg.com/mcandeia/fresh@ca827b12bbdadbc0ed7f1a6ddd7c11c8df272e95/',
 				'preact': 'https://esm.sh/preact@10.19.2',
 				'preact/': 'https://esm.sh/preact@10.19.2/',
 				'preact-render-to-string': 'https://esm.sh/*preact-render-to-string@6.2.1',
