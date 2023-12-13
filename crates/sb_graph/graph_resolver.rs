@@ -144,10 +144,7 @@ impl CliGraphResolver {
                 maybe_import_map: options.maybe_import_map,
                 package_json_deps_provider,
             },
-            maybe_default_jsx_import_source: options
-                .maybe_jsx_import_source_config
-                .as_ref()
-                .and_then(|c| c.default_specifier.clone()),
+            maybe_default_jsx_import_source: Some("preact".to_string()),
             maybe_jsx_import_source_module: options
                 .maybe_jsx_import_source_config
                 .map(|c| c.module),
@@ -201,7 +198,7 @@ impl Default for CliGraphResolver {
                 maybe_import_map: Default::default(),
                 package_json_deps_provider: Default::default(),
             },
-            maybe_default_jsx_import_source: None,
+            maybe_default_jsx_import_source: None, // todo change this
             maybe_jsx_import_source_module: None,
             maybe_vendor_specifier: None,
             no_npm: false,
