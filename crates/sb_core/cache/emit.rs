@@ -48,7 +48,7 @@ impl EmitCache {
     ) -> Option<String> {
         let meta_filename = self.get_meta_filename(specifier)?;
         let emit_filename = self.get_emit_filename(specifier)?;
-
+    
         // load and verify the meta data file is for this source and CLI version
         let bytes = self.disk_cache.get(&meta_filename).ok()?;
         let meta: EmitMetadata = serde_json::from_slice(&bytes).ok()?;

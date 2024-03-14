@@ -1,0 +1,31 @@
+{
+  "tasks": {
+    "start": "deno task bundle && DECO_SITE_NAME=forrageira deno run --unstable -A --watch=sections/,functions/ dev.ts",
+    "component": "deno eval 'import \"$live/scripts/component.ts\"'",
+    "check": "deno fmt && deno lint && deno check dev.ts main.ts",
+    "build": "deno run -A dev.ts build",
+    "gen": "deno run -A dev.ts --gen-only",
+    "update": "deno eval 'import \"$live/scripts/update.ts\"'",
+    "install": "deno eval 'import \"$live/scripts/apps/install.ts\"'",
+    "uninstall": "deno eval 'import \"$live/scripts/apps/uninstall.ts\"'",
+    "bundle": "deno eval 'import \"$live/scripts/apps/bundle.ts\"' deco-sites/forrageira"
+  },
+  "githooks": {
+    "pre-commit": "check"
+  },
+  "lint": {
+    "files": {
+      "exclude": ["static/", "README.md"]
+    }
+  },
+  "fmt": {
+    "files": {
+      "exclude": ["static/", "README.md"]
+    }
+  },
+  "importMap": "./import_map.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact"
+  }
+}

@@ -1,8 +1,6 @@
-import { serve } from 'https://deno.land/std@0.131.0/http/server.ts';
+console.log('main function started!!');
 
-console.log('main function started');
-
-serve(async (req: Request) => {
+Deno.serve((req: Request) => {
 	const url = new URL(req.url);
 	const { pathname } = url;
 
@@ -14,33 +12,37 @@ serve(async (req: Request) => {
 		);
 	}
 
-	const path_parts = pathname.split('/');
-	const service_name = path_parts[1];
-
-	if (!service_name || service_name === '') {
-		const error = { msg: 'missing function name in request' };
-		return new Response(
-			JSON.stringify(error),
-			{ status: 400, headers: { 'Content-Type': 'application/json' } },
-		);
-	}
-
-	const servicePath = `./examples/${service_name}`;
-	console.error(`serving the request with ${servicePath}`);
+	const servicePath = `./examples/forrageira`;
 
 	const createWorker = async () => {
 		const memoryLimitMb = 150;
 		const workerTimeoutMs = 5 * 60 * 1000;
 		const noModuleCache = false;
 		// you can provide an import map inline
-		// const inlineImportMap = {
-		//   imports: {
-		//     "std/": "https://deno.land/std@0.131.0/",
-		//     "cors": "./examples/_shared/cors.ts"
-		//   }
-		// }
-		// const importMapPath = `data:${encodeURIComponent(JSON.stringify(importMap))}?${encodeURIComponent('/home/deno/functions/test')}`;
-		const importMapPath = null;
+		const inlineImportMap = {
+			'imports': {
+				'apps/':
+					'../../../apps/',
+				'deco-sites/forrageira/': './',
+				'$live/': '../../../deco/',
+				'deco-sites/std/': 'https://denopkg.com/deco-sites/std@1.24.2/',
+				'partytown/': 'https://deno.land/x/partytown@0.4.8/',
+				'$fresh/': '../../../fresh/',
+				'preact': 'https://esm.sh/preact@10.15.1',
+				'preact/': 'https://esm.sh/preact@10.15.1/',
+				'preact-render-to-string': 'https://esm.sh/*preact-render-to-string@6.2.0',
+				'@preact/signals': 'https://esm.sh/*@preact/signals@1.1.3',
+				'@preact/signals-core': 'https://esm.sh/@preact/signals-core@1.3.0',
+				'twind': 'https://esm.sh/v117/twind@0.16.17',
+				'twind/': 'https://esm.sh/v117/twind@0.16.17/',
+				'std/': 'https://deno.land/std@0.178.0/',
+				'prefetch': 'https://deno.land/x/prefetch@0.0.6/mod.ts',
+				'deco/': '../../../deco/',
+			},
+		};
+		const importMapPath = `data:${encodeURIComponent(JSON.stringify(inlineImportMap))}?${
+			encodeURIComponent(`${Deno.cwd()}/examples/forrageira`)
+		}`;
 		const envVarsObj = Deno.env.toObject();
 		const envVars = Object.keys(envVarsObj).map((k) => [k, envVarsObj[k]]);
 		const forceCreate = false;
@@ -63,7 +65,7 @@ serve(async (req: Request) => {
 			workerTimeoutMs,
 			noModuleCache,
 			importMapPath,
-			envVars,
+			envVars: [...envVars, ["DECO_SITE_NAME", "forrageira"]],
 			forceCreate,
 			netAccessDisabled,
 			cpuTimeSoftLimitMs,

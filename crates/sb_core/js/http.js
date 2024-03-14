@@ -63,7 +63,7 @@ async function serve(args1, args2) {
 		serve = serveHttp(conn);
 		for await (const e of serve) {
 			try {
-				const res = await opts['handler'](e.request);
+				const res = await opts['handler'](e.request, {});
 				e.respondWith(res);
 			} catch (error) {
 				console.error(error);
