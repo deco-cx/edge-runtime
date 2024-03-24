@@ -36,6 +36,7 @@
     }
   },
   "remote": {
+    "https://deno.land/x/fresh@1.6.5/src/server/default_error_page.tsx": "094ad8d52d31f99172a606d0a0d8236604a1f9bb6d1f928d0d466d55b36dae70",
     "https://deno.land/x/is_even@v1.0/mod.ts": "f0596cc34079796565f5fb7ebc0496c1dfe435f1039a7751e1922c89e6f85d6e"
   }
 }

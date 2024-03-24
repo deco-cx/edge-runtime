@@ -21,13 +21,12 @@ Deno.serve((req: Request) => {
 		// you can provide an import map inline
 		const inlineImportMap = {
 			'imports': {
-				'apps/':
-					'../../../apps/',
+				'apps/': 'https://denopkg.com/deco-cx/apps@0.35.16/',
 				'deco-sites/forrageira/': './',
-				'$live/': '../../../deco/',
+				'$live/': 'https://denopkg.com/deco-cx/deco@1.57.0/',
 				'deco-sites/std/': 'https://denopkg.com/deco-sites/std@1.24.2/',
 				'partytown/': 'https://deno.land/x/partytown@0.4.8/',
-				'$fresh/': '../../../fresh/',
+				'$fresh/': 'https://deno.land/x/fresh@1.6.5/',
 				'preact': 'https://esm.sh/preact@10.15.1',
 				'preact/': 'https://esm.sh/preact@10.15.1/',
 				'preact-render-to-string': 'https://esm.sh/*preact-render-to-string@6.2.0',
@@ -37,7 +36,7 @@ Deno.serve((req: Request) => {
 				'twind/': 'https://esm.sh/v117/twind@0.16.17/',
 				'std/': 'https://deno.land/std@0.178.0/',
 				'prefetch': 'https://deno.land/x/prefetch@0.0.6/mod.ts',
-				'deco/': '../../../deco/',
+				'deco/': 'https://denopkg.com/deco-cx/deco@1.57.28/',
 			},
 		};
 		const importMapPath = `data:${encodeURIComponent(JSON.stringify(inlineImportMap))}?${
@@ -65,7 +64,10 @@ Deno.serve((req: Request) => {
 			workerTimeoutMs,
 			noModuleCache,
 			importMapPath,
-			envVars: [...envVars, ["DECO_SITE_NAME", "forrageira"]],
+			envVars: [...envVars, ['FRESH_ESBUILD_LOADER', 'portable'], [
+				'DECO_SITE_NAME',
+				'forrageira',
+			]],
 			forceCreate,
 			netAccessDisabled,
 			cpuTimeSoftLimitMs,

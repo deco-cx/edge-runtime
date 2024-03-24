@@ -209,12 +209,15 @@ impl FileFetcher {
     ) -> Result<File, AnyError> {
         let maybe_content_type = headers.get("content-type");
         let (media_type, maybe_charset) = map_content_type(specifier, maybe_content_type);
-        let source = get_source_from_bytes(bytes, maybe_charset)?;
-        let maybe_types = match media_type {
+        let _source = get_source_from_bytes(bytes, maybe_charset)?;
+        let jsx_import_source = "/** @jsxImportSource preact */".to_string();
+        println!("{} {}", specifier, media_type);
+        let (maybe_types, source) = match media_type {
             MediaType::JavaScript | MediaType::Cjs | MediaType::Mjs | MediaType::Jsx => {
-                headers.get("x-typescript-types").cloned()
+                (headers.get("x-typescript-types").cloned(), _source)
             }
-            _ => None,
+            MediaType::Tsx => (None, format!("{}\n{}", jsx_import_source, _source)),
+            _ => (None, _source),
         };
 
         Ok(File {

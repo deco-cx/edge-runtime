@@ -174,7 +174,7 @@ impl EmitterFactory {
             jsx_development: false,
             transform_jsx: true,
             jsx_automatic: true,
-            jsx_import_source: Some("https://esm.sh/preact".to_string()),
+            jsx_import_source: Some("preact".to_string()),
             ..Default::default()
         }
     }
