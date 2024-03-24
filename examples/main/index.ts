@@ -26,33 +26,33 @@ serve(async (req: Request) => {
 	// 	if (upgrade.toLowerCase() != "websocket") {
 	// 		return new Response("request isn't trying to upgrade to websocket.");
 	// 	}
-	
+
 	// 	const { socket, response } = Deno.upgradeWebSocket(req);
-	
+
 	// 	socket.onopen = () => console.log("socket opened");
 	// 	socket.onmessage = (e) => {
 	// 		console.log("socket message:", e.data);
 	// 		socket.send(new Date().toString());
 	// 	};
-	
+
 	// 	socket.onerror = e => console.log("socket errored:", e.message);
 	// 	socket.onclose = () => console.log("socket closed");
-	
+
 	// 	return response; // 101 (Switching Protocols)
 	// }
 
-	const path_parts = pathname.split('/');
-	const service_name = path_parts[1];
+	// const path_parts = pathname.split('/');
+	// const service_name = path_parts[1];
 
-	if (!service_name || service_name === '') {
-		const error = { msg: 'missing function name in request' };
-		return new Response(
-			JSON.stringify(error),
-			{ status: 400, headers: { 'Content-Type': 'application/json' } },
-		);
-	}
+	// if (!service_name || service_name === '') {
+	// 	const error = { msg: 'missing function name in request' };
+	// 	return new Response(
+	// 		JSON.stringify(error),
+	// 		{ status: 400, headers: { 'Content-Type': 'application/json' } },
+	// 	);
+	// }
 
-	const servicePath = `./examples/${service_name}`;
+	const servicePath = `./examples/deco`;
 	console.error(`serving the request with ${servicePath}`);
 
 	const createWorker = async () => {
@@ -61,14 +61,24 @@ serve(async (req: Request) => {
 		const noModuleCache = false;
 
 		// you can provide an import map inline
-		// const inlineImportMap = {
-		//   imports: {
-		//     "std/": "https://deno.land/std@0.131.0/",
-		//     "cors": "./examples/_shared/cors.ts"
-		//   }
-		// }
-		// const importMapPath = `data:${encodeURIComponent(JSON.stringify(importMap))}?${encodeURIComponent('/home/deno/functions/test')}`;
-		const importMapPath = null;
+		const inlineImportMap = {
+			'imports': {
+				'deco/': 'https://denopkg.com/deco-cx/deco@1.57.28/',
+				'apps/': 'https://denopkg.com/deco-cx/apps@0.35.14/',
+				'$fresh/': 'https://deno.land/x/fresh@1.6.5/',
+				'preact': 'https://esm.sh/preact@10.19.2',
+				'preact/': 'https://esm.sh/preact@10.19.2/',
+				'preact-render-to-string': 'https://esm.sh/*preact-render-to-string@6.2.2',
+				'@preact/signals': 'https://esm.sh/*@preact/signals@1.2.1',
+				'@preact/signals-core': 'https://esm.sh/*@preact/signals-core@1.5.0',
+				'std/': 'https://deno.land/std@0.190.0/',
+				'partytown/': 'https://denopkg.com/deco-cx/partytown@0.4.8/',
+				'daisyui': 'npm:daisyui@4.6.0',
+			},
+		};
+		const importMapPath = `data:${encodeURIComponent(JSON.stringify(inlineImportMap))}?${
+			encodeURIComponent(`${Deno.cwd()}/examples/deco`)
+		}`;
 		const envVarsObj = Deno.env.toObject();
 		const envVars = Object.keys(envVarsObj).map((k) => [k, envVarsObj[k]]);
 		const forceCreate = false;
@@ -91,7 +101,10 @@ serve(async (req: Request) => {
 			workerTimeoutMs,
 			noModuleCache,
 			importMapPath,
-			envVars,
+			envVars: [...envVars, ['FRESH_ESBUILD_LOADER', 'portable'], [
+				'DECO_SITE_NAME',
+				'start',
+			]],
 			forceCreate,
 			netAccessDisabled,
 			cpuTimeSoftLimitMs,
@@ -130,7 +143,7 @@ serve(async (req: Request) => {
 				// The current request to the worker has been canceled due to
 				// some internal reasons. We should repoll the worker and call
 				// `fetch` again.
-				// return await callWorker();
+				return await callWorker();
 				console.log('cancelled!');
 			}
 
