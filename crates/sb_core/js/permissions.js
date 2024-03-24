@@ -103,9 +103,8 @@ class PermissionStatus extends EventTarget {
     }
 
     [SymbolFor("Deno.privateCustomInspect")](inspect) {
-        return `${this.constructor.name} ${
-            inspect({ state: this.state, onchange: this.onchange })
-        }`;
+        return `${this.constructor.name} ${inspect({ state: this.state, onchange: this.onchange })
+            }`;
     }
 }
 
@@ -198,6 +197,9 @@ class Permissions {
         formDescriptor(desc);
 
         const state = opQuery(desc);
+        if (desc.name === "run") {
+            return cache(desc, "prompt");
+        }
         return cache(desc, state);
     }
 
@@ -252,7 +254,7 @@ function serializePermissions(permissions) {
         const serializedPermissions = {};
         for (
             const key of new SafeArrayIterator(["read", "write", "run", "ffi"])
-            ) {
+        ) {
             if (ArrayIsArray(permissions[key])) {
                 serializedPermissions[key] = ArrayPrototypeMap(
                     permissions[key],
@@ -264,7 +266,7 @@ function serializePermissions(permissions) {
         }
         for (
             const key of new SafeArrayIterator(["env", "hrtime", "net", "sys"])
-            ) {
+        ) {
             if (ArrayIsArray(permissions[key])) {
                 serializedPermissions[key] = ArrayPrototypeSlice(permissions[key]);
             } else {

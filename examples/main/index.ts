@@ -12,7 +12,7 @@ Deno.serve((req: Request) => {
 		);
 	}
 
-	const servicePath = `./examples/forrageira`;
+	const servicePath = `./examples/storefront`;
 
 	const createWorker = async () => {
 		const memoryLimitMb = 150;
@@ -21,26 +21,21 @@ Deno.serve((req: Request) => {
 		// you can provide an import map inline
 		const inlineImportMap = {
 			'imports': {
-				'apps/': 'https://denopkg.com/deco-cx/apps@0.35.16/',
-				'deco-sites/forrageira/': './',
-				'$live/': 'https://denopkg.com/deco-cx/deco@1.57.0/',
-				'deco-sites/std/': 'https://denopkg.com/deco-sites/std@1.24.2/',
-				'partytown/': 'https://deno.land/x/partytown@0.4.8/',
-				'$fresh/': 'https://deno.land/x/fresh@1.6.5/',
-				'preact': 'https://esm.sh/preact@10.15.1',
-				'preact/': 'https://esm.sh/preact@10.15.1/',
-				'preact-render-to-string': 'https://esm.sh/*preact-render-to-string@6.2.0',
-				'@preact/signals': 'https://esm.sh/*@preact/signals@1.1.3',
-				'@preact/signals-core': 'https://esm.sh/@preact/signals-core@1.3.0',
-				'twind': 'https://esm.sh/v117/twind@0.16.17',
-				'twind/': 'https://esm.sh/v117/twind@0.16.17/',
-				'std/': 'https://deno.land/std@0.178.0/',
-				'prefetch': 'https://deno.land/x/prefetch@0.0.6/mod.ts',
 				'deco/': 'https://denopkg.com/deco-cx/deco@1.57.28/',
+				'apps/': 'https://denopkg.com/deco-cx/apps@0.35.14/',
+				'$fresh/': 'https://deno.land/x/fresh@1.6.5/',
+				'preact': 'https://esm.sh/preact@10.19.2',
+				'preact/': 'https://esm.sh/preact@10.19.2/',
+				'preact-render-to-string': 'https://esm.sh/*preact-render-to-string@6.2.2',
+				'@preact/signals': 'https://esm.sh/*@preact/signals@1.2.1',
+				'@preact/signals-core': 'https://esm.sh/*@preact/signals-core@1.5.0',
+				'std/': 'https://deno.land/std@0.190.0/',
+				'partytown/': 'https://denopkg.com/deco-cx/partytown@0.4.8/',
+				'daisyui': 'npm:daisyui@4.6.0',
 			},
 		};
 		const importMapPath = `data:${encodeURIComponent(JSON.stringify(inlineImportMap))}?${
-			encodeURIComponent(`${Deno.cwd()}/examples/forrageira`)
+			encodeURIComponent(`${Deno.cwd()}/examples/storefront`)
 		}`;
 		const envVarsObj = Deno.env.toObject();
 		const envVars = Object.keys(envVarsObj).map((k) => [k, envVarsObj[k]]);
@@ -66,7 +61,7 @@ Deno.serve((req: Request) => {
 			importMapPath,
 			envVars: [...envVars, ['FRESH_ESBUILD_LOADER', 'portable'], [
 				'DECO_SITE_NAME',
-				'forrageira',
+				'storefront',
 			]],
 			forceCreate,
 			netAccessDisabled,

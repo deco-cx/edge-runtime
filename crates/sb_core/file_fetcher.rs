@@ -78,8 +78,13 @@ fn fetch_local(specifier: &ModuleSpecifier) -> Result<File, AnyError> {
         .map_err(|_| uri_error(format!("Invalid file path.\n  Specifier: {specifier}")))?;
     let bytes = fs::read(local)?;
     let charset = text_encoding::detect_charset(&bytes).to_string();
-    let source = get_source_from_bytes(bytes, Some(charset))?;
+    let jsx_import_source = "/** @jsxImportSource preact */".to_string();
+    let _source = get_source_from_bytes(bytes, Some(charset))?;
     let media_type = MediaType::from_specifier(specifier);
+    let source = match media_type {
+        MediaType::Tsx => format!("{}\n{}", jsx_import_source, _source),
+        _ => _source,
+    };
 
     Ok(File {
         maybe_types: None,
