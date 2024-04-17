@@ -35,6 +35,9 @@
       }
     }
   },
+  "redirects": {
+    "https://esm.sh/preact-render-to-string": "https://esm.sh/preact-render-to-string@6.4.2"
+  },
   "remote": {
     "https://deno.land/x/is_even@v1.0/mod.ts": "f0596cc34079796565f5fb7ebc0496c1dfe435f1039a7751e1922c89e6f85d6e"
   }

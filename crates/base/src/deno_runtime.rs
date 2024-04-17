@@ -380,12 +380,7 @@ impl DenoRuntime {
 
         let op_fs = {
             if is_user_worker {
-                Arc::new(sb_fs::static_fs::StaticFs::new(
-                    static_files,
-                    vfs_path,
-                    vfs,
-                    npm_snapshot,
-                )) as Arc<dyn deno_fs::FileSystem>
+                Arc::new(DenoCompileFileSystem::from_rc(vfs)) as Arc<dyn deno_fs::FileSystem>
             } else {
                 Arc::new(DenoCompileFileSystem::from_rc(vfs)) as Arc<dyn deno_fs::FileSystem>
             }
