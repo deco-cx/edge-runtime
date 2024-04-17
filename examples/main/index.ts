@@ -1,8 +1,4 @@
-import { serve } from 'https://deno.land/std@0.131.0/http/server.ts';
-
-console.log('main function started');
-
-serve(async (req: Request) => {
+Deno.serve((req: Request) => {
 	const url = new URL(req.url);
 	const { pathname } = url;
 
@@ -14,61 +10,26 @@ serve(async (req: Request) => {
 		);
 	}
 
-	if (pathname === '/_internal/metric') {
-		const metric = await EdgeRuntime.getRuntimeMetrics();
-		return Response.json(metric);
-	}
-
-	// NOTE: You can test WebSocket in the main worker by uncommenting below.
-	// if (pathname === '/_internal/ws') {
-	// 	const upgrade = req.headers.get("upgrade") || "";
-
-	// 	if (upgrade.toLowerCase() != "websocket") {
-	// 		return new Response("request isn't trying to upgrade to websocket.");
-	// 	}
-
-	// 	const { socket, response } = Deno.upgradeWebSocket(req);
-
-	// 	socket.onopen = () => console.log("socket opened");
-	// 	socket.onmessage = (e) => {
-	// 		console.log("socket message:", e.data);
-	// 		socket.send(new Date().toString());
-	// 	};
-
-	// 	socket.onerror = e => console.log("socket errored:", e.message);
-	// 	socket.onclose = () => console.log("socket closed");
-
-	// 	return response; // 101 (Switching Protocols)
-	// }
-
-	const path_parts = pathname.split('/');
-	const service_name = path_parts[1];
-
-	if (!service_name || service_name === '') {
-		const error = { msg: 'missing function name in request' };
-		return new Response(
-			JSON.stringify(error),
-			{ status: 400, headers: { 'Content-Type': 'application/json' } },
-		);
-	}
-
-	const servicePath = `./examples/${service_name}`;
-	// console.error(`serving the request with ${servicePath}`);
+	const servicePath = `./examples/fresh-project`;
 
 	const createWorker = async () => {
-		const memoryLimitMb = 150;
+		const memoryLimitMb = 1024;
 		const workerTimeoutMs = 5 * 60 * 1000;
 		const noModuleCache = false;
-
 		// you can provide an import map inline
-		// const inlineImportMap = {
-		//   imports: {
-		//     "std/": "https://deno.land/std@0.131.0/",
-		//     "cors": "./examples/_shared/cors.ts"
-		//   }
-		// }
-		// const importMapPath = `data:${encodeURIComponent(JSON.stringify(importMap))}?${encodeURIComponent('/home/deno/functions/test')}`;
-		const importMapPath = null;
+		const inlineImportMap = {
+			'imports': {
+				'$fresh/': 'https://deno.land/x/fresh@1.6.8/',
+				'preact': 'https://esm.sh/preact@10.19.6',
+				'preact/': 'https://esm.sh/preact@10.19.6/',
+				'@preact/signals': 'https://esm.sh/*@preact/signals@1.2.2',
+				'@preact/signals-core': 'https://esm.sh/*@preact/signals-core@1.5.1',
+				'$std/': 'https://deno.land/std@0.216.0/',
+			},
+		};
+		const importMapPath = `data:${encodeURIComponent(JSON.stringify(inlineImportMap))}?${
+			encodeURIComponent(`${Deno.cwd()}${servicePath.slice(1)}`)
+		}`;
 		const envVarsObj = Deno.env.toObject();
 		const envVars = Object.keys(envVarsObj).map((k) => [k, envVarsObj[k]]);
 		const forceCreate = false;
@@ -82,8 +43,8 @@ serve(async (req: Request) => {
 		// or load module source from an inline module
 		// const maybeModuleCode = 'Deno.serve((req) => new Response("Hello from Module Code"));';
 		//
-		const cpuTimeSoftLimitMs = 10000;
-		const cpuTimeHardLimitMs = 20000;
+		const cpuTimeSoftLimitMs = 5000;
+		const cpuTimeHardLimitMs = 5000;
 
 		return await EdgeRuntime.userWorkers.create({
 			servicePath,
@@ -91,11 +52,19 @@ serve(async (req: Request) => {
 			workerTimeoutMs,
 			noModuleCache,
 			importMapPath,
-			envVars,
+			envVars: [...envVars, [
+				'FRESH_ESBUILD_LOADER',
+				'portable',
+			]],
 			forceCreate,
 			netAccessDisabled,
 			cpuTimeSoftLimitMs,
 			cpuTimeHardLimitMs,
+			jsxImportSourceConfig: {
+				defaultSpecifier: 'preact',
+				module: 'jsx-runtime',
+				baseUrl: servicePath,
+			},
 			// maybeEszip,
 			// maybeEntrypoint,
 			// maybeModuleCode,
@@ -117,23 +86,6 @@ serve(async (req: Request) => {
 			return await worker.fetch(req, { signal });
 		} catch (e) {
 			console.error(e);
-
-			if (e instanceof Deno.errors.WorkerRequestCancelled) {
-				// XXX(Nyannyacha): I can't think right now how to re-poll
-				// inside the worker pool without exposing the error to the
-				// surface.
-
-				// It is satisfied when the supervisor that handled the original
-				// request terminated due to reaches such as CPU time limit or
-				// Wall-clock limit.
-				//
-				// The current request to the worker has been canceled due to
-				// some internal reasons. We should repoll the worker and call
-				// `fetch` again.
-				// return await callWorker();
-				console.log('cancelled!');
-			}
-
 			const error = { msg: e.toString() };
 			return new Response(
 				JSON.stringify(error),

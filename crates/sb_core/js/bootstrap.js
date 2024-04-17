@@ -375,7 +375,7 @@ const MOCK_FN = () => {/* do nothing */};
 const DENIED_DENO_FS_API_LIST = ObjectKeys(fsVars)
 	.reduce(
 		(acc, it) => {
-			acc[it] = false;
+			acc[it] = true;
 			return acc;
 		},
 		{}

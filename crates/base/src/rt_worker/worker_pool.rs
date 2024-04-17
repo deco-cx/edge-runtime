@@ -354,6 +354,7 @@ impl WorkerPool {
                         maybe_module_code,
                         maybe_entrypoint,
                         maybe_decorator,
+                        maybe_jsx_import_source_config,
                         ..
                     } = worker_options;
 
@@ -372,6 +373,7 @@ impl WorkerPool {
                                 maybe_entrypoint,
                                 maybe_decorator,
                                 static_patterns: vec![],
+                                maybe_jsx_import_source_config,
                             },
                             tx,
                         ))

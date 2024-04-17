@@ -6,5 +6,10 @@
     "singleQuote": true,
     "proseWrap": "preserve",
     "include": ["examples/**/*.ts"]
+  },
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "experimentalDecorators": true
   }
 }
